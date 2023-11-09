@@ -7,11 +7,18 @@ import sklep.model.Product;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Path("/products")
-public class RProducts {
+@Path("/products.json")
+@Produces("application/json")
+@Consumes("application/json")
+//Adnotacje @PRoduces / @Consumes na poziomie klasy mówią co domyślnie produkują i konsumują metody
+// - metoda może nadpisać te ustawienia (np. metody dot. zdjęć)
+// - adnotacje dotyczą tylko tych metod, które faktycznie coś pobierają lub zwracają
+//   Np. metoda, która niczego nie konsumuje, nie zwróci uwagi na te adnotacje z poziomu klasy.
+// 	Metoda typu void nie zwraca uwagi na adnotację Produces
+
+public class RProductsJSON {
 
     @GET
-    @Produces("application/json")
     public List<Product> readAll() throws DBException {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
@@ -21,7 +28,6 @@ public class RProducts {
 
     @GET
     @Path("/{id}")
-    @Produces("application/json")
     public Product readOne(@PathParam("id") int productId) throws DBException, RecordNotFound {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
@@ -38,7 +44,6 @@ public class RProducts {
     treści zapytania (content  / body / entity).
     W adnotacji @Consumes określamy format, w jakim te dane mają być przysłane.
      */
-    @Consumes("application/json")
     public void saveProduct(Product product) throws DBException {
         try (DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
@@ -53,7 +58,6 @@ public class RProducts {
     // Właściwą strukturą adresu będzie wtedy np. products/3/price
     @GET
     @Path("/{id}/price")
-    @Produces("application/json")
     public BigDecimal getPrice(@PathParam("id") int productId) throws DBException, RecordNotFound {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
@@ -65,7 +69,6 @@ public class RProducts {
     // Metoda PUT służy w HTTP do zapisywania danych DOKŁADNIE POD PODANYM ADRESEM
     @PUT
     @Path("/{id}/price")
-    @Consumes("application/json")
     public void setPrice(@PathParam("id") int productId, BigDecimal newPrice) throws DBException, RecordNotFound {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();

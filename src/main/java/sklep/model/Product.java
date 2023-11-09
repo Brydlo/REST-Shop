@@ -5,7 +5,9 @@ import java.util.Objects;
 
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement // jest to konieczne aby można było zwrócić elementy tej klasy jako obiekt XML
 public class Product {
 	@XmlAttribute(name="id")
 	private Integer productId;

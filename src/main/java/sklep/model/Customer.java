@@ -1,7 +1,10 @@
 package sklep.model;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.util.Objects;
 
+@XmlRootElement
 public class Customer {
 	private String email;
 	private String name;
