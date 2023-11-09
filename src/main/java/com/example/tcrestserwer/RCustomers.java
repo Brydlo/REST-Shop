@@ -1,12 +1,12 @@
 package com.example.tcrestserwer;
 
+import java.net.URI;
 import java.util.List;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import sklep.db.CustomerDAO;
 import sklep.db.DBConnection;
 import sklep.db.DBException;
@@ -31,6 +31,20 @@ public class RCustomers {
         try(DBConnection db = DBConnection.open()) {
             CustomerDAO customerDAO = db.customerDAO();
             return customerDAO.readAll();
+        }
+    }
+
+    @POST
+    public Response save(final Customer customer) throws DBException {
+        try (DBConnection db = DBConnection.open()) {
+            CustomerDAO customerDAO = db.customerDAO();
+            customerDAO.save(customer);
+            db.commit();
+            URI uri = UriBuilder
+                    .fromResource(RCustomers.class)
+                    .path(String.valueOf(customer.getEmail()))
+                    .build();
+            return Response.created(uri).build();
         }
     }
 }
