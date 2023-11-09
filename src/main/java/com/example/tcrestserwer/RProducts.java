@@ -1,19 +1,15 @@
 package com.example.tcrestserwer;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 import sklep.db.*;
 import sklep.model.Product;
 import sklep.model.ProductList;
+
+import java.math.BigDecimal;
+import java.net.URI;
+import java.util.List;
 
 @Path("/products")
 public class RProducts {
@@ -72,38 +68,22 @@ public class RProducts {
 
     @POST
     @Consumes({"application/json", "application/xml"})
-    @Produces({"application/json"})
     // W metodach typu POST i PUT powinien znajdować się dokładnie jeden parametr nieozanczony żadną adnotacją.
     // Do tego parametru zostanie przekazana wartość utworzona na podstawie treści zapytania (content / body / entity).
     // W adnotacji @Consumes określamy format, w jakim te dane mają być przysłane.
-    public InformacjaZwrotna saveProduct(Product product) throws DBException {
+    public Response saveProduct(Product product) throws DBException {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
             productDAO.save(product);
             db.commit();
-            return new InformacjaZwrotna(product.getProductId());
+            // Zwracamy informację, pod jakim adresem został zapisany rekord.
+            URI uri = UriBuilder
+                    .fromResource(RProducts.class)
+                    .path(String.valueOf(product.getProductId()))
+                    .build();
+            return Response.created(uri).build();
         }
     }
-
-    public static class InformacjaZwrotna {
-        private int noweId;
-
-        public InformacjaZwrotna() {
-        }
-
-        public InformacjaZwrotna(int noweId) {
-            this.noweId = noweId;
-        }
-
-        public int getNoweId() {
-            return noweId;
-        }
-
-        public void setNoweId(int noweId) {
-            this.noweId = noweId;
-        }
-    }
-
 
     // Ta metoda zwraca wartość wybranego pola w rekordzie.
     // W praktyce rzadko kiedy twozy się takie metody, ale gdybyśmy wiedzieli, że klient akurat takiej rzeczy może potrzebować,
