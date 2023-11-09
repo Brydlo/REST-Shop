@@ -17,16 +17,7 @@ import sklep.model.ProductList;
 
 @Path("/products")
 public class RProducts {
-/*
-    @GET
-    @Produces({"application/json", "application/xml", "text/plain"}) // WildFly zwraca jako domyślny pierwszy wpisany paramtr
-    public List<Product> readAll() throws DBException {
-        try(DBConnection db = DBConnection.open()) {
-            ProductDAO productDAO = db.productDAO();
-            return productDAO.readAll();
-        }
-    }
-  */
+
     @GET
     @Produces({"application/xml", "text/plain"})
     public ProductList readAll() throws DBException {
@@ -71,16 +62,45 @@ public class RProducts {
         }
     }
 
+    @GET
+    @Produces("text/html;charset=UTF-8")
+    @Path("/{id}")
+    public String readOneHTML(@PathParam("id") int productId) throws DBException, RecordNotFound {
+        Product product = readOne(productId);
+        return "<!DOCTYPE html>\n<html><body>" + product.toHtml() + "</body></html>";
+    }
+
     @POST
     @Consumes({"application/json", "application/xml"})
+    @Produces({"application/json"})
     // W metodach typu POST i PUT powinien znajdować się dokładnie jeden parametr nieozanczony żadną adnotacją.
     // Do tego parametru zostanie przekazana wartość utworzona na podstawie treści zapytania (content / body / entity).
     // W adnotacji @Consumes określamy format, w jakim te dane mają być przysłane.
-    public void saveProduct(Product product) throws DBException {
+    public InformacjaZwrotna saveProduct(Product product) throws DBException {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
             productDAO.save(product);
             db.commit();
+            return new InformacjaZwrotna(product.getProductId());
+        }
+    }
+
+    public static class InformacjaZwrotna {
+        private int noweId;
+
+        public InformacjaZwrotna() {
+        }
+
+        public InformacjaZwrotna(int noweId) {
+            this.noweId = noweId;
+        }
+
+        public int getNoweId() {
+            return noweId;
+        }
+
+        public void setNoweId(int noweId) {
+            this.noweId = noweId;
         }
     }
 
