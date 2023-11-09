@@ -75,6 +75,17 @@ public class RProducts {
             db.commit();
         }
     }
+    @DELETE
+    @Path("/{id}")
+    public void delete(@PathParam("id") int productId) throws DBException {
+        try(DBConnection db = DBConnection.open()) {
+            ProductDAO productDAO = db.productDAO();
+            productDAO.delete(productId);
+            db.commit();
+        }
+    }
+
+
 
 
     @GET

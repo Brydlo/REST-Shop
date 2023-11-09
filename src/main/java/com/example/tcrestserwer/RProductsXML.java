@@ -2,10 +2,11 @@ package com.example.tcrestserwer;
 
 import jakarta.ws.rs.*;
 import sklep.db.*;
+import sklep.model.Price;
 import sklep.model.Product;
+import sklep.model.ProductList;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Path("/products.xml")
 @Produces("application/xml")
@@ -13,10 +14,10 @@ import java.util.List;
 public class RProductsXML {
 
     @GET
-    public List<Product> readAll() throws DBException {
+    public ProductList readAll() throws DBException {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
-            return productDAO.readAll();
+            return new ProductList(productDAO.readAll());
         }
     }
 
@@ -52,10 +53,10 @@ public class RProductsXML {
     // Właściwą strukturą adresu będzie wtedy np. products/3/price
     @GET
     @Path("/{id}/price")
-    public BigDecimal getPrice(@PathParam("id") int productId) throws DBException, RecordNotFound {
+    public Price getPrice(@PathParam("id") int productId) throws DBException, RecordNotFound {
         try(DBConnection db = DBConnection.open()) {
             ProductDAO productDAO = db.productDAO();
-            return productDAO.findById(productId).getPrice();
+            return new Price(productDAO.findById(productId).getPrice());
         }
     }
 
