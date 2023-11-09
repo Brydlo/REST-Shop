@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import static java.lang.System.out;
 
 @Provider
-public class Product2HtmlMapper implements MessageBodyWriter<Product> {
+public class Product2HtmlWriter implements MessageBodyWriter<Product> {
     @Override
     public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
 //        na podstawie informacji odczytanych z kodu związanego z metodą zwracającą wynik mamy odpowiedzieć na pytanie
