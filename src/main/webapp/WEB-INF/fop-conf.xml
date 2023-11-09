@@ -64,7 +64,7 @@ the location of this file.
         <!-- embedded fonts -->
         <!--
         This information must exactly match the font specified
-        in the fo file. Otherwise it will use a default font.
+        in the fo file. Otherwise, it will use a default font.
 
         For example,
         <fo:inline font-family="Arial" font-weight="bold" font-style="normal">
